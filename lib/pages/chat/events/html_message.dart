@@ -275,6 +275,8 @@ class ImageExtension extends HtmlExtension {
     final actualWidth = width ?? height ?? defaultDimension;
     final actualHeight = height ?? width ?? defaultDimension;
 
+    final isThumbnail = context.attributes['data-mx-emoticon'] == null;
+
     return WidgetSpan(
       child: SizedBox(
         width: actualWidth,
@@ -283,7 +285,7 @@ class ImageExtension extends HtmlExtension {
           uri: mxcUrl,
           width: actualWidth,
           height: actualHeight,
-          isThumbnail: (actualWidth * actualHeight) > (256 * 256),
+          isThumbnail: isThumbnail,
         ),
       ),
     );

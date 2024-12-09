@@ -114,25 +114,32 @@ class Message extends StatelessWidget {
     final displayEvent = event.getDisplayEvent(timeline);
     const hardCorner = Radius.circular(4);
     const roundedCorner = Radius.circular(AppConfig.borderRadius);
-    final borderRadius = BorderRadius.only(
-      topLeft: !ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
-      topRight: ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
-      bottomLeft:
-          !ownMessage && previousEventSameSender ? hardCorner : roundedCorner,
-      bottomRight:
-          ownMessage && previousEventSameSender ? hardCorner : roundedCorner,
-    );
+    final bigEmotes = event.messageType == MessageTypes.Text &&
+        event.relationshipType == null &&
+        event.onlyEmotes &&
+        event.numberEmotes > 0 &&
+        event.numberEmotes <= 3;
+    final borderRadius = bigEmotes
+        ? BorderRadius.all(hardCorner)
+        : BorderRadius.only(
+            topLeft:
+                !ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
+            topRight:
+                ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
+            bottomLeft: !ownMessage && previousEventSameSender
+                ? hardCorner
+                : roundedCorner,
+            bottomRight: ownMessage && previousEventSameSender
+                ? hardCorner
+                : roundedCorner,
+          );
     final noBubble = ({
               MessageTypes.Video,
               MessageTypes.Image,
               MessageTypes.Sticker,
             }.contains(event.messageType) &&
             !event.redacted) ||
-        (event.messageType == MessageTypes.Text &&
-            event.relationshipType == null &&
-            event.onlyEmotes &&
-            event.numberEmotes > 0 &&
-            event.numberEmotes <= 3);
+        bigEmotes;
     final noPadding = {
       MessageTypes.File,
       MessageTypes.Audio,
